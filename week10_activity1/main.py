@@ -173,50 +173,63 @@ print("NOTE: Predictions for 14-15 years are EXTRAPOLATIONS beyond the training 
 
 
 # VISUALIZATION
-
-# Create smooth curve for polynomial regression
+# Visualization
 X_range = np.linspace(X.min(), X.max() + 2, 200).reshape(-1, 1)
 y_range_linear = model.predict(X_range)
 y_range_poly = model_poly.predict(poly.transform(X_range))
 
-# Plot the data and predictions
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+plt.figure(figsize=(12, 7))
 
-# Plot 1: Full view with predictions
-ax1.scatter(X, y, color='blue', alpha=0.6, label='Actual Data', s=80)
-ax1.plot(X_range, y_range_linear, color='green', linewidth=2, label='Linear Regression')
-ax1.plot(X_range, y_range_poly, color='red', linewidth=2, label='Polynomial (degree=2)')
+plt.scatter(X, y, color='blue', alpha=0.6, label='Actual Data', s=80)
+plt.plot(X_range, y_range_linear, color='green', linewidth=2, label='Linear Regression')
+plt.plot(X_range, y_range_poly, color='red', linewidth=2, label='Polynomial (degree=2)')
 
-# Highlight predicted points
-ax1.scatter(experience_to_predict, linear_predictions, 
+plt.scatter(experience_to_predict, linear_predictions, 
            color='green', s=200, marker='s', 
            edgecolors='darkgreen', linewidth=2,
            label='Linear Predictions')
 
-ax1.scatter(experience_to_predict, poly_predictions, 
+plt.scatter(experience_to_predict, poly_predictions, 
            color='red', s=200, marker='^', 
            edgecolors='darkred', linewidth=2,
            label='Polynomial Predictions')
 
-# Add value labels
 for i, exp in enumerate([14, 14.5, 15]):
     linear_val = linear_predictions[i][0] if isinstance(linear_predictions[i], np.ndarray) else linear_predictions[i]
     poly_val = poly_predictions[i][0] if isinstance(poly_predictions[i], np.ndarray) else poly_predictions[i]
     
-    ax1.annotate(f'${linear_val:,.0f}', 
+    plt.annotate(f'${linear_val:,.0f}', 
                 xy=(exp, linear_val),
                 xytext=(exp+0.3, linear_val+5000),
                 fontsize=9, color='darkgreen', weight='bold')
     
-    ax1.annotate(f'${poly_val:,.0f}', 
+    plt.annotate(f'${poly_val:,.0f}', 
                 xy=(exp, poly_val),
                 xytext=(exp+0.3, poly_val-8000),
                 fontsize=9, color='darkred', weight='bold')
 
-ax1.axvline(x=max_exp, color='gray', linestyle='--', alpha=0.5, label=f'Max Data: {max_exp} yrs')
-ax1.set_xlabel('Years of Experience', fontsize=12)
-ax1.set_ylabel('Salary ($)', fontsize=12)
-ax1.set_title('Salary Prediction: Linear vs Polynomial Regression', fontsize=14, weight='bold')
-ax1.legend(loc='upper left', fontsize=10)
-ax1.grid(True, alpha=0.3)
-ax1.set_xticks(np.arange(0, 18, 2))
+plt.axvline(x=df['YearsExperience'].max(), color='gray', linestyle='--', alpha=0.5, 
+            label=f'Max Data: {df["YearsExperience"].max()} yrs')
+
+plt.xlabel('Years of Experience', fontsize=12)
+plt.ylabel('Salary ($)', fontsize=12)
+plt.title('Salary Prediction: Linear vs Polynomial Regression', fontsize=14, weight='bold')
+plt.legend(loc='upper left', fontsize=10)
+plt.grid(True, alpha=0.3)
+plt.xticks(np.arange(0, 18, 2))
+plt.tight_layout()
+plt.show()
+
+# Model Comparison
+print("\n" + "="*60)
+print("MODEL PERFORMANCE COMPARISON")
+print("="*60)
+print(f"Linear Model R2 Score: {r2:.4f}")
+print(f"Polynomial Model R2 Score: {r2_poly:.4f}")
+print(f"Linear Model RMSE: ${rmse:,.2f}")
+print(f"Polynomial Model RMSE: ${rmse_poly:,.2f}")
+
+if r2_poly > r2:
+    print("\nPolynomial Regression performs better (higher R2 score)")
+else:
+    print("\nLinear Regression performs better (higher R2 score)")
