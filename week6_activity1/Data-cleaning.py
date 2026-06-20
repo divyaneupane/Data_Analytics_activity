@@ -20,7 +20,7 @@ iris_df = pd.DataFrame(iris.data, columns=iris.feature_names)
 # Add target column (numeric: 0,1,2)
 iris_df['class'] = iris.target
 
-# Rename columns to simpler names (optional)
+# Rename columns to simpler names 
 iris_df.columns = ['sepal_len', 'sepal_wid', 'petal_len', 'petal_wid', 'class']
 
 # 2. INITIAL DATA INSPECTION
